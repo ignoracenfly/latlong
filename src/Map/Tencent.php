@@ -58,10 +58,18 @@ class Tencent extends AbstractMap
                 var ap = new qq.maps.place.Autocomplete(document.getElementById("search-{$id['lat']}{$id['lng']}"));
 
                 var searchService = new qq.maps.SearchService({
-                    map : map
+                    map : map,
+                    complete: function(results) {
+                        if (results.type === 'CITY_LIST') {
+                            searchService.setLocation(results.detail.cities[0].cityName);
+                            searchService.search(window.__temp_keyword);
+                            return;
+                          }
+                    }
                 });
 
                 qq.maps.event.addListener(ap, "confirm", function(res){
+                    window.__temp_keyword = res.value;
                     searchService.search(res.value);
                 });
             }
